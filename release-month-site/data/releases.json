@@ -1,0 +1,45 @@
+[
+  {
+    "brand": "SEIKO",
+    "model": "（サンプル）Mechanical",
+    "reference": "SAMPLE-001",
+    "release_year": 2001,
+    "release_month": 12,
+    "status": "発表月",
+    "confidence": 0.6,
+    "sources": [
+      {
+        "title": "メーカー発表（例）",
+        "url": "https://example.com/seiko-press-2001-12"
+      }
+    ],
+    "notes": "実データに差し替えてください。"
+  },
+  {
+    "brand": "OMEGA",
+    "model": "（サンプル）Speedmaster",
+    "reference": "SAMPLE-SM",
+    "release_year": 2001,
+    "release_month": 9,
+    "status": "確定",
+    "confidence": 0.9,
+    "sources": [
+      {
+        "title": "一次資料（例）",
+        "url": "https://example.com/omega-press-2001-09"
+      }
+    ],
+    "notes": "発売月が確定しているケースの例。"
+  },
+  {
+    "brand": "ROLEX",
+    "model": "（サンプル）Explorer",
+    "reference": "SAMPLE-EXPL",
+    "release_year": 2001,
+    "release_month": null,
+    "status": "不明",
+    "confidence": 0.3,
+    "sources": [],
+    "notes": "発表月のみ/不明の例。"
+  }
+]

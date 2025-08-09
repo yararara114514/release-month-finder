@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Release Month Finder | あなたとともに生まれた時計が見つかる！</title>
+  <meta name="description" content="発売“月”で腕時計を検索できるミニDB。あなたと同じ月に生まれた時計を見つけよう。">
+  <link rel="stylesheet" href="./assets/style.css">
+</head>
+<body>
+<header class="site-header">
+  <h1>Release Month Finder</h1>
+  <p class="subtitle">あなたとともに生まれた時計が見つかる！</p>
+</header>
+
+<main class="container">
+  <section class="search">
+    <label>ブランド <input id="brand" placeholder="SEIKO / ROLEX / OMEGA..."></label>
+    <label>年 <input id="year" type="number" placeholder="2001"></label>
+    <label>月 
+      <select id="month">
+        <option value="">（指定なし）</option>
+        <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12">12</option>
+      </select>
+    </label>
+    <button id="go">検索</button>
+    <button id="reset" class="ghost">リセット</button>
+  </section>
+
+  <section id="list" class="list">
+    <div class="empty">検索するとここに結果が出るよ。</div>
+  </section>
+
+  <section class="note">
+    <h2>注意</h2>
+    <p>このサイトの「発売月」は一次資料（メーカーや当時のプレス）を最優先にしています。発表月と発売月は異なることがあるため、各カードのラベルで区別しています。</p>
+  </section>
+</main>
+
+<footer class="site-footer"><small>© 2025 Release Month Finder</small></footer>
+
+<script>
+async function getData() {
+  const res = await fetch('./data/releases.json');
+  return await res.json();
+}
+function badge(x) {
+  const cls = x.status === '確定' ? 'badge solid' : (x.status === '発表月' ? 'badge outline' : 'badge ghost');
+  const m = x.release_month ? (x.release_month + '月') : '—';
+  return `<span class="${cls}">${m} / ${x.status||'不明'}</span>`;
+}
+function item(x) {
+  const src = (x.sources||[]).map(s => `<li><a href="${s.url}" target="_blank" rel="noopener">${s.title||s.url}</a></li>`).join('');
+  return `<article class="card">
+    <header><strong>${x.brand}</strong> <span class="muted">${x.reference||''}</span></header>
+    <div class="title">${x.model||''}</div>
+    <div class="meta">
+      <div><b>年</b> ${x.release_year||'—'}</div>
+      <div><b>月</b> ${x.release_month||'—'}</div>
+      <div><b>確度</b> ${(x.confidence??0).toFixed(2)}</div>
+      <div>${badge(x)}</div>
+    </div>
+    <details><summary>証拠</summary><ul>${src||'<li>—</li>'}</ul><p>${x.notes||''}</p></details>
+  </article>`;
+}
+function render(arr) {
+  const el = document.getElementById('list');
+  if (!arr.length) { el.innerHTML = '<div class="empty">該当なし</div>'; return; }
+  el.innerHTML = arr.map(item).join('');
+}
+function applyFilter(data) {
+  const b = document.getElementById('brand').value.trim().toLowerCase();
+  const y = document.getElementById('year').value.trim();
+  const m = document.getElementById('month').value;
+  return data.filter(x => 
+    (!b || (x.brand||'').toLowerCase().includes(b)) &&
+    (!y || String(x.release_year)===String(y)) &&
+    (!m || Number(x.release_month)===Number(m))
+  );
+}
+(async () => {
+  const data = await getData();
+  const go = document.getElementById('go');
+  const reset = document.getElementById('reset');
+  go.onclick = () => render(applyFilter(data));
+  reset.onclick = () => { document.getElementById('brand').value=''; document.getElementById('year').value=''; document.getElementById('month').value=''; render([]); };
+})();
+</script>
+</body>
+</html>
